@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Contact
 
 def index(request):
@@ -9,7 +9,7 @@ def index(request):
     })
 
 def see_contact(request, contact_id):
-    contact = Contact.objects.get(id=contact_id)
+    contact = get_object_or_404(Contact, id=contact_id)
 
     return render(request, 'contacts/see_contact.html', {
         'contact': contact
