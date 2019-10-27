@@ -3,8 +3,10 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Value
 from django.db.models.functions import Concat
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import Contact
 
+@login_required(redirect_field_name='login')
 def index(request):
     contacts = Contact.objects.order_by('-id').filter(
         show=True
@@ -18,6 +20,7 @@ def index(request):
         'contacts': contacts
     })
 
+@login_required(redirect_field_name='login')
 def see_contact(request, contact_id):
     contact = get_object_or_404(Contact, id=contact_id)
 
@@ -28,6 +31,7 @@ def see_contact(request, contact_id):
         'contact': contact
     })
 
+@login_required(redirect_field_name='login')
 def search(request):
     term = request.GET.get('term')
 
