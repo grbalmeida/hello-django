@@ -9,7 +9,8 @@ class ContactAdmin(admin.ModelAdmin):
         'phone',
         'email',
         'creation_date',
-        'category'
+        'category',
+        'show'
     )
 
     list_display_links = (
@@ -27,6 +28,11 @@ class ContactAdmin(admin.ModelAdmin):
         'name',
         'last_name',
         'phone'
+    )
+
+    list_editable = (
+        'phone',
+        'show'
     )
 
     list_per_page = 10
