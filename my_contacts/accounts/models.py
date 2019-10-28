@@ -1,3 +1,8 @@
 from django.db import models
+from django import forms
+from contacts.models import Contact
 
-# Create your models here.
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        exclude = ('show',)
