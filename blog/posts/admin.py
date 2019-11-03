@@ -19,6 +19,6 @@ class PostAdmin(SummernoteModelAdmin):
         'post_title',
     )
 
-    summernote_fields = ('content',)
+    summernote_fields = ('post_content',)
 
 admin.site.register(Post, PostAdmin)
