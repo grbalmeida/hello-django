@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}
+    Category
+{% endblock %}
+
+{% block content %}
+    <!-- CONTENT -->
+    <div class="card-columns mt-4">
+        {% for post in posts %}
+        <div class="card">
+
+            {% if post.post_image %}
+                <a href="{% url 'post_details' post.id %}">
+                    <img class="card-img-top"
+                        src="{{ post.post_image.url }}"
+                        alt="{{ post.post_title }}">
+                </a>
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'post_details' post.id %}">
+                        {{ post.post_title }}
+                    </a>
+                </h5>
+                <p class="card-text">
+                    {{ post.post_summary }}
+                </p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        {{ post.post_creation_date | naturalday | title }}
+                        |
+                        {{ post.number_of_comments }} comment(s)
+                        |
+                        {{ post.post_category }}
+                    </small>
+                </p>
+
+                <div class="text-right">
+                    <a href="{% url 'post_details' post.id %}" class="btn btn-outline-secondary">Read more...</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!--/CONTENT-->
+    {% include 'partials/_pagination.html' %}
+{% endblock %}
