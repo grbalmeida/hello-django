@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- POST -->
+    <div class="container">
+        <div class="row pt-5">
+            <div class="col-xl"></div>
+            <div class="col-xl-8 text-center">
+                <h2>{{ post.post_title }}</h2>
+                <h5>{{ post.post_summary }}</h5>
+                <p class="text-muted mt-4">
+                    <small>
+                        {{ post.post_author }} |
+                        {{ post.post_creation_date }} |
+                        {{ post.post_category }}
+                    </small>
+                </p>
+            </div>
+            <div class="col-xl"></div>
+        </div>
+        <div class="row pt-5">
+            <div class="col-xl"></div>
+            <div class="col-xl-8">
+                {% if post.post_image %}
+                    <img
+                        class="img-fluid pb-5 "
+                        src="{{ post.post_image.url }}"
+                        alt="{{ post.post_title }}"
+                    >
+                {% endif %}
+
+                {{ post.post_content | safe }}
+            </div>
+            <div class="col-xl"></div>
+        </div>
+        <div class="row pt-5">
+            <div class="col-xl"></div>
+            <div class="col-xl-8">
+                <h2 class="my-3">Comments (1)</h2>
+                <h5 class="mb-2 mt-5">Luiz Otávio disse:</h5>
+                <small class="text-muted">hoje</small>
+                <p class="mb-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
+                    ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
+                    montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,
+                    pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel,
+                    aliquet nec, vulputate&lt;</p>
+            </div>
+            <div class="col-xl"></div>
+        </div>
+        <div class="row pt-5">
+            <div class="col-xl"></div>
+            <div class="col-xl-8">
+                <h2 class="my-3">Comment</h2>
+                <form method="POST" action="{% url 'post_details' post.id %}">
+                    {% csrf_token %}
+                    <table class="table">
+                        {{ form }}
+                        <tr>
+                            <td colspan="2">
+                                {% include 'partials/_messages.html' %}
+                                <input
+                                    id="send_comment"
+                                    type="submit"
+                                    class="btn btn-primary"
+                                    value="Submit"
+                                />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div class="col-xl"></div>
+        </div>
+    </div>
+    <!-- POST -->
+{% endblock %}

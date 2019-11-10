@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
 from django.db.models import Q, Count, Case, When
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from .models import Post
+from comments.forms import CommentForm
+from comments.models import Comment
 
 class PostIndex(ListView):
     model = Post
@@ -59,4 +64,24 @@ class PostCategory(PostIndex):
         return queryset
 
 class PostDetails(UpdateView):
-    pass
+    template_name = 'posts/post_details.html'
+    model = Post
+    form_class = CommentForm
+    context_object_name = 'post'
+
+    def form_valid(self, form):
+        post = self.get_object()
+        comment = Comment(**form.cleaned_data)
+        comment.comment_post = post
+
+        if self.request.user.is_authenticated:
+            comment.comment_user = self.request.user
+
+        comment.save()
+        
+        messages.success(self.request, 'Comment successfully sent')
+
+        return HttpResponseRedirect(self.request.path_info)
+
+    def get_object(self):
+        return get_object_or_404(Post, pk=self.kwargs.get('id'))
