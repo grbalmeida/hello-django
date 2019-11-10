@@ -1,6 +1,9 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
+from PIL import Image
 from categories.models import Category
 
 class Post(models.Model):
@@ -14,4 +17,32 @@ class Post(models.Model):
     post_published = models.BooleanField(default=False, verbose_name='Publicado')
 
     def __str__(self):
-        return self.post_content
+        return self.post_title
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        self.resize_image(self.post_image.name, 800)
+
+    @staticmethod
+    def resize_image(image_name, new_width):
+        image_path = os.path.join(settings.MEDIA_ROOT, image_name)
+        image = Image.open(image_path)
+
+        width, height = image.size
+
+        new_height = round((new_width * height) / width)
+
+        if width <= new_width:
+            image.close()
+            return
+
+        new_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+
+        new_image.save(
+            image_path,
+            optimize=True,
+            quality=60
+        )
+
+        new_image.close()
