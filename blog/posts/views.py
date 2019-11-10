@@ -17,6 +17,7 @@ class PostIndex(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.select_related('post_category')
         queryset = queryset.order_by('-id').filter(post_published=True)
         queryset = queryset.annotate(
             number_of_comments=Count(
