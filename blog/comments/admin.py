@@ -11,6 +11,10 @@ class CommentAdmin(admin.ModelAdmin):
         'comment_published',
     )
 
+    list_editable = (
+        'comment_published',
+    )
+
     list_display_links = (
         'id',
         'comment_author',

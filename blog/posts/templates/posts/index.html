@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load singular_or_plural %}
 
 {% block content %}
     <!-- CONTENT -->
@@ -28,7 +29,7 @@
                     <small class="text-muted">
                         {{ post.post_creation_date | naturalday | title }}
                         |
-                        {{ post.number_of_comments }} comment(s)
+                        {{ post.number_of_comments | singular_or_plural }}
                         |
                         {{ post.post_category }}
                     </small>

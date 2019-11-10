@@ -83,5 +83,17 @@ class PostDetails(UpdateView):
 
         return HttpResponseRedirect(self.request.path_info)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+        comments = Comment.objects.filter(
+            comment_published=True,
+            comment_post=post.id
+        )
+
+        context['comments'] = comments
+
+        return context
+
     def get_object(self):
         return get_object_or_404(Post, pk=self.kwargs.get('id'))

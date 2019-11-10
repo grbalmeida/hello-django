@@ -33,20 +33,21 @@
             </div>
             <div class="col-xl"></div>
         </div>
-        <div class="row pt-5">
-            <div class="col-xl"></div>
-            <div class="col-xl-8">
-                <h2 class="my-3">Comments (1)</h2>
-                <h5 class="mb-2 mt-5">Luiz Otávio disse:</h5>
-                <small class="text-muted">hoje</small>
-                <p class="mb-1">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo
-                    ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient
-                    montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,
-                    pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel,
-                    aliquet nec, vulputate&lt;</p>
+        {% if comments %}
+            <div class="row pt-5">
+                <div class="col-xl"></div>
+                <div class="col-xl-8">
+                    <h2 class="my-3">Comments ({{ comments.count }})</h2>
+                    
+                    {% for comment in comments %}
+                        <h5 class="mb-2 mt-5">{{ comment.comment_author }} said:</h5>
+                        <small class="text-muted">{{ comment.comment_creation_date }}</small>
+                        <p class="mb-1">{{ comment.comment }}</p>
+                    {% endfor %}
+                </div>
+                <div class="col-xl"></div>
             </div>
-            <div class="col-xl"></div>
-        </div>
+        {% endif %}
         <div class="row pt-5">
             <div class="col-xl"></div>
             <div class="col-xl-8">
