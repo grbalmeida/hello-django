@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
+from django.views import View
 from django.db.models import Q, Count, Case, When
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -64,7 +65,7 @@ class PostCategory(PostIndex):
 
         return queryset
 
-class PostDetails(UpdateView):
+'''class PostDetails(UpdateView):
     template_name = 'posts/post_details.html'
     model = Post
     form_class = CommentForm
@@ -97,4 +98,42 @@ class PostDetails(UpdateView):
         return context
 
     def get_object(self):
-        return get_object_or_404(Post, pk=self.kwargs.get('id'))
+        return get_object_or_404(Post, pk=self.kwargs.get('id'))'''
+
+class PostDetails(View):
+    template_name = 'posts/post_details.html'
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
+        pk = self.kwargs.get('id')
+        post = get_object_or_404(Post, pk=pk, post_published=True)
+        comments = Comment.objects.filter(comment_post=post, comment_published=True)
+
+        self.context = {
+            'post': post,
+            'comments': comments,
+            'form': CommentForm(request.POST or None),
+        }
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.context.get('form')
+
+        if not form.is_valid():
+            return render(request, self.template_name, self.context)
+
+        comment = form.save(commit=False)
+
+        if request.user.is_authenticated:
+            comment.comment_user = request.user
+
+        comment.comment_post = self.context.get('post')
+
+        comment.save()
+
+        messages.success(request, 'Comment posted and awaiting review')
+
+        return HttpResponseRedirect(request.path_info)
