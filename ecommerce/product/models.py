@@ -20,6 +20,10 @@ class Product(models.Model):
         )
     )
 
+    class Meta:
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
@@ -49,3 +53,17 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class Variation(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, blank=True, null=True)
+    price = models.FloatField()
+    promotional_price = models.FloatField(default=0)
+    stock = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        verbose_name = 'Variation'
+        verbose_name_plural = 'Variations'
+
+    def __str__(self):
+        return self.name or self.product.name
