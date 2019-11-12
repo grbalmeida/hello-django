@@ -1,4 +1,7 @@
+import os
 from django.db import models
+from django.conf import settings
+from PIL import Image
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
@@ -16,3 +19,33 @@ class Product(models.Model):
             ('S', 'Simple')
         )
     )
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.image:
+            self.resize_image(self.image, new_width=800)
+
+    @staticmethod
+    def resize_image(image, new_width=800):
+        image_full_path = os.path.join(settings.MEDIA_ROOT, image.name)
+        image_pil = Image.open(image_full_path)
+
+        original_width, original_height = image_pil.size
+
+        if original_width <= new_width:
+            image_pil.close()
+            return
+
+        new_height = round((new_width * original_height) / original_width)
+
+        new_image = image_pil.resize((new_width, new_height), Image.LANCZOS)
+
+        new_image.save(
+            image_full_path,
+            optimize=True,
+            quality=60
+        )
+
+    def __str__(self):
+        return self.name
