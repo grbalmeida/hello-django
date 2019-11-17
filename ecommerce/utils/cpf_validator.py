@@ -1,6 +1,6 @@
 import re
 
-def cpf_validator(cpf):
+def is_valid_cpf(cpf):
     cpf = str(cpf)
     cpf = re.sub(r'[^0-9]', '', cpf)
 
