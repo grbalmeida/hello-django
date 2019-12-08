@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from PIL import Image
+from utils import format_price
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
@@ -36,12 +37,12 @@ class Product(models.Model):
             self.resize_image(self.image, new_width=800)
 
     def get_formatted_price_marketing(self):
-        return f'R$ {self.price_marketing:.2f}'.replace('.', ',')
+        return format_price.format_price(self.price_marketing)
 
     get_formatted_price_marketing.short_description = 'Price Marketing'
 
     def get_formatted_promotional_price_marketing(self):
-        return f'R$ {self.promotional_price_marketing:.2f}'.replace('.', ',')
+        return format_price.format_price(self.promotional_price_marketing)
 
     get_formatted_promotional_price_marketing.short_description = 'Promotional Price Marketing'
 
