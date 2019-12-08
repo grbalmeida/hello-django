@@ -10,7 +10,7 @@ class UserProfile(models.Model):
     cpf = models.CharField(max_length=11)
 
     def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name}'
+        return f'{self.user}'
 
     def clean(self):
         error_messages = {}
