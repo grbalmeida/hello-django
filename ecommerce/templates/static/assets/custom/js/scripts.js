@@ -1,20 +1,20 @@
 (function () {
-    const select_variation = document.getElementById('select-variation');
+    const select_variations = document.getElementById('select-variations');
     const variation_price = document.getElementById('variation-price');
-    const variation_price_promotional = document.getElementById('variation-price-promotional');
+    const variation_promotional_price = document.getElementById('variation-promotional_price');
 
-    if (!select_variation || !variation_price) {
+    if (!select_variations || !variation_price) {
         return;
     }
 
-    select_variation.addEventListener('change', function () {
+    select_variations.addEventListener('change', function () {
         price = this.options[this.selectedIndex].getAttribute('data-price');
-        price_promotional = this.options[this.selectedIndex].getAttribute('data-price-promotional');
+        promotional_price = this.options[this.selectedIndex].getAttribute('data-promotional-price');
 
         variation_price.innerHTML = price;
 
-        if (variation_price_promotional) {
-            variation_price_promotional.innerHTML = price_promotional;
+        if (variation_promotional_price) {
+            variation_promotional_price.innerHTML = promotional_price;
         }
     })
 })();
