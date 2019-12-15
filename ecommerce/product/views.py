@@ -98,9 +98,8 @@ class AddToCart(View):
             }
 
         self.request.session.save()
-        # pprint(cart)
 
-        messages.success(
+        messages.succes0s(
             self.request,
             f'{product_name} {variation_name} product added to your cart'
         )
@@ -109,11 +108,42 @@ class AddToCart(View):
 
 class RemoveFromCart(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('Remove from Cart')
+        http_referer = self.request.META.get(
+            'HTTP_REFERER',
+            reverse('product:list')
+        )
+
+        variation_id = self.request.GET.get('vid')
+
+        if not variation_id:
+            return redirect(http_referer)
+
+        cart = self.request.session.get('cart')
+
+        if not cart:
+            return redirect(http_referer)
+
+        if variation_id not in cart:
+            return redirect(http_referer)
+
+        messages.success(
+            self.request,
+            f'Product {cart[variation_id]["product_name"]} '
+            f'{cart[variation_id]["variation_name"]} removed from your cart'
+        )
+
+        del cart[variation_id]
+        self.request.session.save()
+
+        return redirect(http_referer)
 
 class Cart(View):
     def get(self, *args, **kwargs):
-        return render(self.request, 'product/cart.html')
+        context = {
+            'cart': self.request.session.get('cart')
+        }
+
+        return render(self.request, 'product/cart.html', context)
 
 class FinalizeOrder(View):
     def get(self, *args, **kwargs):
