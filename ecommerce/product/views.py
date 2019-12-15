@@ -99,7 +99,7 @@ class AddToCart(View):
 
         self.request.session.save()
 
-        messages.succes0s(
+        messages.success(
             self.request,
             f'{product_name} {variation_name} product added to your cart'
         )
@@ -145,6 +145,6 @@ class Cart(View):
 
         return render(self.request, 'product/cart.html', context)
 
-class FinalizeOrder(View):
+class PurchaseSummary(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('Finalize Order')
+        return render(self.request, 'product/purchase-summary.html')
