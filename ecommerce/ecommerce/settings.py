@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
 
     # TODO: Remove debug toolbar
     'debug_toolbar',
@@ -158,3 +159,5 @@ SESSION_SAVE_EVERY_REQUEST = False
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
