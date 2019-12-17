@@ -1,7 +1,9 @@
+import copy
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from . import models
 from . import forms
 
@@ -11,6 +13,7 @@ class BaseUserProfile(View):
     def setup(self, *args, **kwargs):
         super().setup(*args, **kwargs)
 
+        self.cart = copy.deepcopy(self.request.session.get('cart', {}))
         self.profile = None
 
         if self.request.user.is_authenticated:
@@ -43,6 +46,9 @@ class BaseUserProfile(View):
 
         self.user_form = self.context['user_form']
         self.user_profile_form = self.context['user_profile_form']
+
+        if self.request.user.is_authenticated:
+            self.template_name = 'user_profile/update.html'
 
         self.render = render(
             self.request,
@@ -79,6 +85,15 @@ class Create(BaseUserProfile):
             user.first_name = first_name
             user.last_name = last_name
             user.save()
+
+            if not self.profile:
+                self.user_profile_form.cleaned_data['user'] = user
+                profile = models.UserProfile(**self.user_profile_form.cleaned_data)
+                profile.save()
+            else:
+                profile = self.user_profile_form.save(commit=False)
+                profile.user = user
+                profile.save()
         else:
             user = self.user_form.save(commit=False)
             user.set_password(password)
@@ -88,11 +103,19 @@ class Create(BaseUserProfile):
             user_profile.user = user
             user_profile.save()
 
-        return self.render
+        if password:
+            authenticate_user = authenticate(
+                self.request,
+                username=user,
+                password=password
+            )
 
-class Update(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('Update')
+            if authenticate_user:
+                login(self.request, user=user)
+
+        self.request.session['cart'] = self.cart
+        self.request.session.save()
+        return self.render
 
 class Login(View):
     def get(self, *args, **kwargs):
