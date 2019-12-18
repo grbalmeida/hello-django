@@ -4,8 +4,8 @@ from django.views.generic.detail import DetailView
 from django.views import View
 from django.http import HttpResponse
 from django.contrib import messages
-from pprint import pprint
 from . import models
+from user_profile.models import UserProfile, Address
 
 class ProductList(ListView):
     model = models.Product
@@ -147,4 +147,34 @@ class Cart(View):
 
 class PurchaseSummary(View):
     def get(self, *args, **kwargs):
-        return render(self.request, 'product/purchase-summary.html')
+        if not self.request.user.is_authenticated:
+            return redirect('user_profile:create')
+
+        user_profile_exists = UserProfile.objects.filter(user=self.request.user).exists()
+        user_profile = UserProfile.objects.get(user=self.request.user)
+        address = Address.objects.get(user_profile=user_profile)
+
+        if not user_profile_exists:
+            messages.error(
+                self.request,
+                'User without profile'
+            )
+
+            return redirect('user_profile:create')
+
+        if not self.request.session.get('cart'):
+            messages.error(
+                self.request,
+                'Empty cart'
+            )
+
+            return redirect('product:list')
+
+        context = {
+            'user': self.request.user,
+            'cart': self.request.session['cart'],
+            'address': address,
+            'user_profile': user_profile
+        }
+
+        return render(self.request, 'product/purchase-summary.html', context)
